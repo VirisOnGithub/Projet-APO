@@ -6,12 +6,12 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class Parser {
-    public static void parse() {
+    public static ArrayList<Pair<Integer, Integer>> parse3x3() {
         ArrayList<ArrayList<Integer>> grid = new ArrayList<>();
-        ArrayList<ArrayList<ArrayList<Integer>>> blocks = new ArrayList<>();
+        ArrayList<Pair<Integer, Integer>> cells = new ArrayList<>();
         
         try {
-            File myObj = new File("grid.csv");
+            File myObj = new File("../src/grid.csv");
             Scanner myScan = new Scanner(myObj);
             while (myScan.hasNextLine()) {
                 String data = myScan.nextLine();
@@ -31,7 +31,6 @@ public class Parser {
             if(grid.get(i).size() != 9){
                 System.err.println("Illegal width for line" + (i+1));
             }
-            blocks.add(new ArrayList<>());
         }
 
         for (int i = 0; i < 9; i++){
@@ -39,15 +38,14 @@ public class Parser {
                 if(grid.get(i).get(j) < 0 || grid.get(i).get(j) > 9){
                     System.err.println("Illegal value at (" + (i+1) + "," + (j+1) + ")");
                 }
-                blocks.get(i/3*3+j/3).add(new ArrayList<>(Arrays.asList(grid.get(i).get(j), i, j)));
+                cells.add(new Pair<>(grid.get(i).get(j), i/3*3+j/3));
             }
         }
 
-            for (ArrayList<ArrayList<Integer>> block : blocks) {
-                for (ArrayList<Integer> cell : block) {
-                    System.out.println(cell);
-                }
-                System.out.println("\n");
-            }
+        // for(Pair<ArrayList<Integer>, Integer> cell : cells){
+        //     System.out.println(cell.first + " " + cell.second);
+        // }
+
+        return cells;
     }
 }
