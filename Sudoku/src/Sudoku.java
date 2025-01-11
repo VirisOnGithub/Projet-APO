@@ -3,7 +3,7 @@ import java.util.HashMap;
 
 public class Sudoku {
     private ArrayList<Pair<Integer, Integer>> sudoku;
-    private Pair<Integer, Integer> dimensions;
+    private final Pair<Integer, Integer> dimensions;
     private static final String ANSI_RESET = "\u001B[0m";
     private static final HashMap<Integer, String> ANSI_HASH_MAP = new HashMap<>();
 

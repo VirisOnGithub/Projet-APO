@@ -11,16 +11,16 @@ public class Parser {
         ArrayList<Pair<Integer, Integer>> cells = new ArrayList<>();
         
         try {
-            File myObj = new File("../src/grid.csv");
+            File myObj = new File("src/grid.csv");
             Scanner myScan = new Scanner(myObj);
             while (myScan.hasNextLine()) {
                 String data = myScan.nextLine();
-                grid.add(new ArrayList<>(new ArrayList<>(Arrays.asList(data.split(",")).stream().map(Integer::parseInt).collect(Collectors.toList()))));
+                grid.add(new ArrayList<>(new ArrayList<>(Arrays.stream(data.split(",")).map(Integer::parseInt).collect(Collectors.toList()))));
             }
             myScan.close();
         } catch (FileNotFoundException e) {
             System.out.println("Error");
-            e.printStackTrace();
+            System.err.println("File not found: " + e.getMessage());
         }
 
         if(grid.size() != 9){
