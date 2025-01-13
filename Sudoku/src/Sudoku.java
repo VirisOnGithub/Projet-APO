@@ -4,6 +4,7 @@ import java.util.HashMap;
 public class Sudoku {
     private ArrayList<Pair<Integer, Integer>> sudoku;
     private final Pair<Integer, Integer> dimensions;
+    public boolean solved = false;
     private static final String ANSI_RESET = "\u001B[0m";
     private static final HashMap<Integer, String> ANSI_HASH_MAP = new HashMap<>();
 
@@ -46,17 +47,16 @@ public class Sudoku {
         return sb.toString();
     }
 
-    public boolean solveUsingRules() {
-        boolean isSolved = false;
+    public void solveUsingRules() {
         boolean progressMade = true;
-        while (!isSolved && progressMade) {
-            isSolved = true;
+        while (!solved && progressMade) {
+            solved = true;
             progressMade = false;
             for (int i = 0; i < dimensions.first; i++) {
                 for (int j = 0; j < dimensions.second; j++) {
                     int index = i * dimensions.second + j;
                     if (sudoku.get(index).first == 0) {
-                        isSolved = false;
+                        solved = false;
                         ArrayList<Integer> possibleValues = new ArrayList<>();
                         for (int k = 1; k <= 9; k++) {
                             possibleValues.add(k);
@@ -81,12 +81,65 @@ public class Sudoku {
                             sudoku.set(index, new Pair<>(possibleValues.get(0), 9));
                             progressMade = true;
                         } else if (possibleValues.size() == 0) {
-                            return false;
+                            return;
                         }
                     }
                 }
             }
         }
-        return isSolved;
+        return;
+    }
+
+    public void solveUsingBacktracking() {
+        solveUsingBacktracking(0);
+    }
+
+    private void solveUsingBacktracking(int index) {
+        if (index == 81) {
+            solved = true;
+            return;
+        }
+        if (sudoku.get(index).first == 0) {
+            for (int i = 1; i <= 9; i++) {
+                sudoku.set(index, new Pair<>(i, 9));
+                if (isValid(index)) {
+                    solveUsingBacktracking(index + 1);
+                    if (solved) {
+                        return;
+                    }
+                }
+            }
+            sudoku.set(index, new Pair<>(0, 9));
+        } else {
+            solveUsingBacktracking(index + 1);
+        }
+    }
+
+    private boolean isValid(int index) {
+        int i = index / dimensions.second;
+        int j = index % dimensions.second;
+        for (int k = 0; k < dimensions.first; k++) {
+            int index1 = k * dimensions.second + j;
+            if (index1 != index && sudoku.get(index1).first == sudoku.get(index).first) {
+                return false;
+            }
+        }
+        for (int k = 0; k < dimensions.second; k++) {
+            int index1 = i * dimensions.second + k;
+            if (index1 != index && sudoku.get(index1).first == sudoku.get(index).first) {
+                return false;
+            }
+        }
+        int boxRow = i / 3;
+        int boxCol = j / 3;
+        for (int k = 0; k < 3; k++) {
+            for (int l = 0; l < 3; l++) {
+                int index1 = (boxRow * 3 + k) * dimensions.second + (boxCol * 3 + l);
+                if (index1 != index && sudoku.get(index1).first == sudoku.get(index).first) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

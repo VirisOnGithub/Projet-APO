@@ -13,7 +13,7 @@ public class Parser {
         ArrayList<Pair<Integer, Integer>> cells = new ArrayList<>();
         
         try {
-            File myObj = new File("src/impossiblegrid.csv");
+            File myObj = new File("src/grid.csv");
             Scanner myScan = new Scanner(myObj);
             while (myScan.hasNextLine()) {
                 String data = myScan.nextLine();
