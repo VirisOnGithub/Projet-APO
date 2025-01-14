@@ -8,12 +8,10 @@ import java.util.stream.Collectors;
 import static java.lang.System.exit;
 
 public class Parser {
-    public static ArrayList<Pair<Integer, Integer>> parse3x3() {
+    public static ArrayList<ArrayList<Integer>> parseGrid(String path){
         ArrayList<ArrayList<Integer>> grid = new ArrayList<>();
-        ArrayList<Pair<Integer, Integer>> cells = new ArrayList<>();
-        
         try {
-            File myObj = new File("src/grid.csv");
+            File myObj = new File(path);
             Scanner myScan = new Scanner(myObj);
             while (myScan.hasNextLine()) {
                 String data = myScan.nextLine();
@@ -33,33 +31,38 @@ public class Parser {
             System.out.println("Error");
             System.err.println("File not found: " + e.getMessage());
         }
+        return grid;
+    }
 
-        if(grid.size() != 9){
-            System.err.println("Illegal Height");
+    public static Sudoku parseNXN(String path) {
+        ArrayList<ArrayList<Integer>> grid = parseGrid(path);
+        ArrayList<Pair<Integer, Integer>> cells = new ArrayList<>();
+
+        int size = grid.size();
+
+        // Si la size n'est pas un carré parfait
+        if(Math.sqrt(size) % 1 != 0){
+            System.err.println("Illegal Height - Not a perfect square " + size);
             exit(1);
         }
 
-        for (int i = 0; i < 9; i++) {
-            if(grid.get(i).size() != 9){
+        for (int i = 0; i < size; i++) {
+            if(grid.get(i).size() != size){
                 System.err.println("Illegal width for line " + (i+1));
                 exit(1);
             }
         }
 
-        for (int i = 0; i < 9; i++){
-            for (int j = 0; j < 9; j++) {
-                if(grid.get(i).get(j) < 0 || grid.get(i).get(j) > 9){
+        for (int i = 0; i < size; i++){
+            for (int j = 0; j < size; j++) {
+                if(grid.get(i).get(j) < 0 || grid.get(i).get(j) > size){
                     System.err.println("Illegal value at (" + (i+1) + "," + (j+1) + ")");
                     exit(1);
                 }
-                cells.add(new Pair<>(grid.get(i).get(j), i/3*3+j/3));
+                cells.add(new Pair<>(grid.get(i).get(j), i/(int)Math.sqrt(size)*(int)Math.sqrt(size)+j/(int)Math.sqrt(size)));
             }
         }
 
-        // for(Pair<ArrayList<Integer>, Integer> cell : cells){
-        //     System.out.println(cell.first + " " + cell.second);
-        // }
-
-        return cells;
+        return new Sudoku(cells, Pair.create(size, size));
     }
 }

@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Sudoku {
     private ArrayList<Pair<Integer, Integer>> sudoku;
@@ -47,8 +48,41 @@ public class Sudoku {
         return sb.toString();
     }
 
+    public String basicToString() {
+        // Find the maximum number of digits in the sudoku
+        int maxSizeNumber = 0;
+        for (int i = 0; i < dimensions.first; i++) {
+            for (int j = 0; j < dimensions.second; j++) {
+                int index = i * dimensions.second + j;
+                int sizeNumber = String.valueOf(sudoku.get(index).first).length();
+                if (sizeNumber > maxSizeNumber) {
+                    maxSizeNumber = sizeNumber;
+                }
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < dimensions.first; i++) {
+            for (int j = 0; j < dimensions.second; j++) {
+                int index = i * dimensions.second + j;
+                if (sudoku.get(index).first == 0) {
+                    sb.append(" ".repeat(maxSizeNumber));
+                } else {
+                    int sizeNumber = String.valueOf(sudoku.get(index).first).length();
+                    sb.append(" ".repeat(Math.max(0, maxSizeNumber - sizeNumber)));
+                    sb.append(sudoku.get(index).first);
+                }
+                if (j < dimensions.second - 1) {
+                    sb.append(" ");
+                }
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+
     public void solveUsingRules() {
         boolean progressMade = true;
+        int blockSize = (int) Math.sqrt(dimensions.first);
         while (!solved && progressMade) {
             solved = true;
             progressMade = false;
@@ -58,36 +92,35 @@ public class Sudoku {
                     if (sudoku.get(index).first == 0) {
                         solved = false;
                         ArrayList<Integer> possibleValues = new ArrayList<>();
-                        for (int k = 1; k <= 9; k++) {
+                        for (int k = 1; k <= dimensions.first; k++) {
                             possibleValues.add(k);
                         }
                         for (int k = 0; k < dimensions.first; k++) {
                             int index1 = k * dimensions.second + j;
-                            possibleValues.remove((Integer) sudoku.get(index1).first);
+                            possibleValues.remove(sudoku.get(index1).first);
                         }
                         for (int k = 0; k < dimensions.second; k++) {
                             int index1 = i * dimensions.second + k;
-                            possibleValues.remove((Integer) sudoku.get(index1).first);
+                            possibleValues.remove(sudoku.get(index1).first);
                         }
-                        int boxRow = i / 3;
-                        int boxCol = j / 3;
-                        for (int k = 0; k < 3; k++) {
-                            for (int l = 0; l < 3; l++) {
-                                int index1 = (boxRow * 3 + k) * dimensions.second + (boxCol * 3 + l);
-                                possibleValues.remove((Integer) sudoku.get(index1).first);
+                        int boxRow = i / blockSize;
+                        int boxCol = j / blockSize;
+                        for (int k = 0; k < blockSize; k++) {
+                            for (int l = 0; l < blockSize; l++) {
+                                int index1 = (boxRow * blockSize + k) * dimensions.second + (boxCol * blockSize + l);
+                                possibleValues.remove(sudoku.get(index1).first);
                             }
                         }
                         if (possibleValues.size() == 1) {
-                            sudoku.set(index, new Pair<>(possibleValues.get(0), 9));
+                            sudoku.set(index, new Pair<>(possibleValues.getFirst(), 9));
                             progressMade = true;
-                        } else if (possibleValues.size() == 0) {
+                        } else if (possibleValues.isEmpty()) {
                             return;
                         }
                     }
                 }
             }
         }
-        return;
     }
 
     public void solveUsingBacktracking() {
@@ -95,12 +128,12 @@ public class Sudoku {
     }
 
     private void solveUsingBacktracking(int index) {
-        if (index == 81) {
+        if (index == dimensions.first * dimensions.second) {
             solved = true;
             return;
         }
         if (sudoku.get(index).first == 0) {
-            for (int i = 1; i <= 9; i++) {
+            for (int i = 1; i <= dimensions.first; i++) {
                 sudoku.set(index, new Pair<>(i, 9));
                 if (isValid(index)) {
                     solveUsingBacktracking(index + 1);
@@ -118,24 +151,25 @@ public class Sudoku {
     private boolean isValid(int index) {
         int i = index / dimensions.second;
         int j = index % dimensions.second;
+        int blockSize = (int) Math.sqrt(dimensions.first);
         for (int k = 0; k < dimensions.first; k++) {
             int index1 = k * dimensions.second + j;
-            if (index1 != index && sudoku.get(index1).first == sudoku.get(index).first) {
+            if (index1 != index && Objects.equals(sudoku.get(index1).first, sudoku.get(index).first)) {
                 return false;
             }
         }
         for (int k = 0; k < dimensions.second; k++) {
             int index1 = i * dimensions.second + k;
-            if (index1 != index && sudoku.get(index1).first == sudoku.get(index).first) {
+            if (index1 != index && Objects.equals(sudoku.get(index1).first, sudoku.get(index).first)) {
                 return false;
             }
         }
-        int boxRow = i / 3;
-        int boxCol = j / 3;
-        for (int k = 0; k < 3; k++) {
-            for (int l = 0; l < 3; l++) {
-                int index1 = (boxRow * 3 + k) * dimensions.second + (boxCol * 3 + l);
-                if (index1 != index && sudoku.get(index1).first == sudoku.get(index).first) {
+        int boxRow = i / blockSize;
+        int boxCol = j / blockSize;
+        for (int k = 0; k < blockSize; k++) {
+            for (int l = 0; l < blockSize; l++) {
+                int index1 = (boxRow * blockSize + k) * dimensions.second + (boxCol * blockSize + l);
+                if (index1 != index && Objects.equals(sudoku.get(index1).first, sudoku.get(index).first)) {
                     return false;
                 }
             }
