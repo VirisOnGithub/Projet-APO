@@ -1,6 +1,8 @@
 public class Main {
     public static void main(String[] args) {
-        Sudoku s = Parser.parseNXN("src/4x4.csv");
+        boolean hard = true;
+        int taille = 3;
+        Sudoku s = Parser.parseNXN("src/" + taille + "x" + taille + (hard ? "hard" : "") + ".csv");
         System.out.println(s.basicToString());
         System.out.println("Solving...\n\n\n");
         long time = System.currentTimeMillis();

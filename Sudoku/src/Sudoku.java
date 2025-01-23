@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class Sudoku {
@@ -175,5 +176,9 @@ public class Sudoku {
             }
         }
         return true;
+    }
+
+    public List<Pair<Integer, Integer>> getBlock(int index) {
+        return sudoku.stream().filter(pair -> pair.second == index).toList();
     }
 }
