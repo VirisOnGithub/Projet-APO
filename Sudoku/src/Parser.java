@@ -49,6 +49,8 @@ public class Parser {
                 }
                 if(data.isEmpty()){
                     sudokus.add(createNXN(grid));
+//                    System.out.println(grid);
+                    grid = new ArrayList<>();
                 } else {
                     grid.add(
                             new ArrayList<>(

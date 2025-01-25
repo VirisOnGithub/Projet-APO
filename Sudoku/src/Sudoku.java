@@ -178,7 +178,7 @@ public class Sudoku {
         return true;
     }
 
-    public List<Pair<Integer, Integer>> getBlock(int index) {
-        return sudoku.stream().filter(pair -> pair.second == index).toList();
+    public List<Integer> getBlock(int index) {
+        return sudoku.stream().filter(pair -> pair.second == index).map(pair -> pair.first).toList();
     }
 }
