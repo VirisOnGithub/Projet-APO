@@ -86,10 +86,7 @@ public class Parser {
     }
 
     public static Sudoku parseNXN(String path) {
-        ArrayList<ArrayList<Integer>> grid = parseGrid(path);
-        ArrayList<Pair<Integer, Integer>> cells = new ArrayList<>();
-
-        return createNXN(grid);
+        return createNXN(parseGrid(path));
     }
     
     public static Sudoku createNXN(ArrayList<ArrayList<Integer>> grid) {

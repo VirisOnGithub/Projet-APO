@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class Sudoku {
-    private ArrayList<Pair<Integer, Integer>> sudoku;
-    private final Pair<Integer, Integer> dimensions;
+    ArrayList<Pair<Integer, Integer>> sudoku;
+    final Pair<Integer, Integer> dimensions;
     public boolean solved = false;
     private static final String ANSI_RESET = "\u001B[0m";
     private static final HashMap<Integer, String> ANSI_HASH_MAP = new HashMap<>();
@@ -113,7 +113,7 @@ public class Sudoku {
                             }
                         }
                         if (possibleValues.size() == 1) {
-                            sudoku.set(index, new Pair<>(possibleValues.getFirst(), 9));
+                            sudoku.set(index, new Pair<>(possibleValues.getFirst(), sudoku.get(index).second));
                             progressMade = true;
                         } else if (possibleValues.isEmpty()) {
                             return;
@@ -135,7 +135,7 @@ public class Sudoku {
         }
         if (sudoku.get(index).first == 0) {
             for (int i = 1; i <= dimensions.first; i++) {
-                sudoku.set(index, new Pair<>(i, 9));
+                sudoku.set(index, new Pair<>(i, sudoku.get(index).second));
                 if (isValid(index)) {
                     solveUsingBacktracking(index + 1);
                     if (solved) {
