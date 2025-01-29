@@ -7,6 +7,7 @@ import java.util.Objects;
 
 public class Sudoku {
     ArrayList<Pair<Integer, Integer>> sudoku;
+    private ArrayList<Block> blocks;
     final Pair<Integer, Integer> dimensions;
     public boolean solved = false;
     private static final String ANSI_RESET = "\u001B[0m";
@@ -28,6 +29,13 @@ public class Sudoku {
     public Sudoku(ArrayList<Pair<Integer, Integer>> sudoku, Pair<Integer, Integer> dimensions) {
         this.sudoku = sudoku;
         this.dimensions = dimensions;
+        this.blocks = new ArrayList<>();
+    }
+
+    public Sudoku(ArrayList<Pair<Integer, Integer>> sudoku, Pair<Integer, Integer> dimensions, ArrayList<Block> blocks) {
+        this.sudoku = sudoku;
+        this.dimensions = dimensions;
+        this.blocks = blocks;
     }
 
     public String toString() {
@@ -85,7 +93,6 @@ public class Sudoku {
 
     public void solveUsingRules() {
         boolean progressMade = true;
-        int blockSize = (int) Math.sqrt(dimensions.first);
         while (!solved && progressMade) {
             solved = true;
             progressMade = false;
@@ -106,14 +113,7 @@ public class Sudoku {
                             int index1 = i * dimensions.second + k;
                             possibleValues.remove(sudoku.get(index1).first);
                         }
-                        int boxRow = i / blockSize;
-                        int boxCol = j / blockSize;
-                        for (int k = 0; k < blockSize; k++) {
-                            for (int l = 0; l < blockSize; l++) {
-                                int index1 = (boxRow * blockSize + k) * dimensions.second + (boxCol * blockSize + l);
-                                possibleValues.remove(sudoku.get(index1).first);
-                            }
-                        }
+                        // TODO: Parse Block
                         if (possibleValues.size() == 1) {
                             sudoku.set(index, new Pair<>(possibleValues.getFirst(), sudoku.get(index).second));
                             progressMade = true;
