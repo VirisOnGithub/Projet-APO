@@ -41,7 +41,7 @@ public class ParserNxN implements Parser {
 
         int size = grid.size();
 
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i <= size; i++) {
             blocks.add(new Block());
         }
 
@@ -64,9 +64,11 @@ public class ParserNxN implements Parser {
                     System.err.println("Illegal value at (" + (i + 1) + "," + (j + 1) + ")");
                     exit(1);
                 }
-                int blockIndex = i + j / (int) Math.sqrt(size);
+                System.out.println("I et J: " + i + " " + j);
+                int blockIndex = i/(int) Math.sqrt(size)*(int) Math.sqrt(size) + j/(int) Math.sqrt(size);
+                System.out.println(blockIndex);
                 cells.add(new Pair<>(grid.get(i).get(j), blockIndex));
-                blocks.get(blockIndex).addCase(blockIndex);
+                blocks.get(blockIndex + 1).addCase(i*size + j);
             }
         }
 

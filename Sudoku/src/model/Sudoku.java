@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class Sudoku {
     public ArrayList<Pair<Integer, Integer>> sudoku;
-    private final ArrayList<Block> blocks;
+    public final ArrayList<Block> blocks;
     final Pair<Integer, Integer> dimensions;
     public boolean solved = false;
     private static final String ANSI_RESET = "\u001B[0m";
