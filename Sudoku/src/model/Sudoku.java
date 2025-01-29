@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class Sudoku {
     ArrayList<Pair<Integer, Integer>> sudoku;
-    private ArrayList<Block> blocks;
+    private final ArrayList<Block> blocks;
     final Pair<Integer, Integer> dimensions;
     public boolean solved = false;
     private static final String ANSI_RESET = "\u001B[0m";
@@ -24,12 +24,6 @@ public class Sudoku {
         ANSI_HASH_MAP.put(7, "\u001B[37m");
         ANSI_HASH_MAP.put(8, "\u001B[38;5;208m");
         ANSI_HASH_MAP.put(9, "\u001B[38;5;196m");
-    }
-
-    public Sudoku(ArrayList<Pair<Integer, Integer>> sudoku, Pair<Integer, Integer> dimensions) {
-        this.sudoku = sudoku;
-        this.dimensions = dimensions;
-        this.blocks = new ArrayList<>();
     }
 
     public Sudoku(ArrayList<Pair<Integer, Integer>> sudoku, Pair<Integer, Integer> dimensions, ArrayList<Block> blocks) {
@@ -102,18 +96,31 @@ public class Sudoku {
                     if (sudoku.get(index).first == 0) {
                         solved = false;
                         ArrayList<Integer> possibleValues = new ArrayList<>();
+
+                        // Add all possibilities to the case
                         for (int k = 1; k <= dimensions.first; k++) {
                             possibleValues.add(k);
                         }
+
+                        // Check if value in column are already taken
                         for (int k = 0; k < dimensions.first; k++) {
                             int index1 = k * dimensions.second + j;
                             possibleValues.remove(sudoku.get(index1).first);
                         }
+
+                        // Check if value in row are already taken
                         for (int k = 0; k < dimensions.second; k++) {
                             int index1 = i * dimensions.second + k;
                             possibleValues.remove(sudoku.get(index1).first);
                         }
-                        // TODO: Parse Block
+
+                        // Check if value in block are already taken
+                        for(int indexSudoku: blocks.get(index).getCases()){
+                            if (indexSudoku != index) {
+                                possibleValues.remove(sudoku.get(indexSudoku).first);
+                            }
+                        }
+
                         if (possibleValues.size() == 1) {
                             sudoku.set(index, new Pair<>(possibleValues.getFirst(), sudoku.get(index).second));
                             progressMade = true;
