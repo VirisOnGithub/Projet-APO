@@ -1,14 +1,11 @@
 import model.Block;
-import model.Multidoku;
 import model.Pair;
 import model.Sudoku;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
