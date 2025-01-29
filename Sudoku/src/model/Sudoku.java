@@ -123,7 +123,9 @@ public class Sudoku {
 
                         if (possibleValues.size() == 1) {
                             sudoku.set(index, new Pair<>(possibleValues.getFirst(), sudoku.get(index).second));
-                            // blocks.get(sudoku.get(index).second).getCases().add(index);
+                            System.out.println(blocks.get(sudoku.get(index).second));
+                            blocks.get(sudoku.get(index).second).getCases().add(index);
+                            System.out.println("Index " + sudoku.get(index).second + ": - " + blocks.get(sudoku.get(index).second));
                             progressMade = true;
                         } else if (possibleValues.isEmpty()) {
                             return;
