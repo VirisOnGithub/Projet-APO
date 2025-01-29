@@ -1,3 +1,7 @@
+import model.Multidoku;
+import model.Pair;
+import model.Sudoku;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -49,7 +53,6 @@ public class Parser {
                 }
                 if(data.isEmpty()){
                     sudokus.add(createNXN(grid));
-//                    System.out.println(grid);
                     grid = new ArrayList<>();
                 } else {
                     grid.add(
