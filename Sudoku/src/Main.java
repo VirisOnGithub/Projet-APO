@@ -5,11 +5,12 @@ public class Main {
         boolean hard = false;
         int taille = 3;
         Sudoku s;
-        s = (new ParserNxN()).parse((System.getProperty("os.name").equals("Linux") ? "src/resources/" : "Sudoku\\src\\resources\\") + taille + "x" + taille + (hard ? "hard" : "") + ".csv");
+        s = (new SplitBlocksParser()).parse((System.getProperty("os.name").equals("Linux") ? "src/resources/" : "Sudoku\\src\\resources\\") + taille + "x" + taille + (hard ? "hard" : "") + ".csv");
         System.out.println(s.basicToString());
         System.out.println("Solving...\n\n\n");
         long time = System.currentTimeMillis();
         s.solveUsingRules();
+        // s.solveUsingBacktracking();
         System.out.println("Time: " + (System.currentTimeMillis() - time) + "ms");
         System.out.println(s);
     }

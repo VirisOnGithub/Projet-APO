@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Sudoku {
-    ArrayList<Pair<Integer, Integer>> sudoku;
+    public ArrayList<Pair<Integer, Integer>> sudoku;
     private final ArrayList<Block> blocks;
     final Pair<Integer, Integer> dimensions;
     public boolean solved = false;
@@ -115,7 +115,7 @@ public class Sudoku {
                         }
 
                         // Check if value in block are already taken
-                        for(int indexSudoku: blocks.get(index).getCases()){
+                        for(int indexSudoku: blocks.get(sudoku.get(index).second).getCases()){
                             if (indexSudoku != index) {
                                 possibleValues.remove(sudoku.get(indexSudoku).first);
                             }
@@ -123,6 +123,7 @@ public class Sudoku {
 
                         if (possibleValues.size() == 1) {
                             sudoku.set(index, new Pair<>(possibleValues.getFirst(), sudoku.get(index).second));
+                            // blocks.get(sudoku.get(index).second).getCases().add(index);
                             progressMade = true;
                         } else if (possibleValues.isEmpty()) {
                             return;
@@ -152,7 +153,7 @@ public class Sudoku {
                     }
                 }
             }
-            sudoku.set(index, new Pair<>(0, 9));
+            sudoku.set(index, new Pair<>(0, sudoku.get(index).second));
         } else {
             solveUsingBacktracking(index + 1);
         }

@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.System.exit;
 
@@ -18,25 +19,22 @@ public class SplitBlocksParser implements Parser {
         try {
             File myObj = new File(path);
             Scanner myScan = new Scanner(myObj);
+            AtomicReference<Integer> count = new AtomicReference<>(0);
             while (myScan.hasNextLine()) {
                 String data = myScan.nextLine();
                 grid.addAll(Arrays.stream(data.split(","))
-                        .parallel()
                         .map(expr -> {
-                            if (expr.equals("0")) {
-                                return new Pair<>(0, 0);
-                            } else if (expr.contains(":")) {
-                                String[] split = expr.split(":");
-                                int blockIndex = Integer.parseInt(split[0]);
-                                int value = Integer.parseInt(split[1]);
-                                if (blocks.size() <= blockIndex) {
-                                    adjustSize(blocks, blockIndex);
-                                }
-                                blocks.get(blockIndex).addCase(value);
-                                return new Pair<>(value, blockIndex);
-                            } else {
-                                throw new Error("Invalid input");
+                            String[] split = expr.split(":");
+                            int value = Integer.parseInt(split[0]);
+                            int blockIndex = Integer.parseInt(split[1]);
+                            if (blocks.size() <= blockIndex) {
+                                adjustSize(blocks, blockIndex);
                             }
+                            if (value != 0) {
+                                blocks.get(blockIndex).addCase(count.get());
+                            }
+                            count.getAndSet(count.get() + 1);
+                            return new Pair<>(value, blockIndex);
                         })
                         .toList());
             }
@@ -62,7 +60,7 @@ public class SplitBlocksParser implements Parser {
     }
 
     private void adjustSize(ArrayList<Block> blocks, int size) {
-        while (blocks.size() < size) {
+        while (blocks.size() <= size) {
             blocks.add(new Block());
         }
     }
