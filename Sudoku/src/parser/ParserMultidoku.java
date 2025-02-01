@@ -1,13 +1,6 @@
-import model.Multidoku;
-import model.Sudoku;
+package parser;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Scanner;
-import java.util.stream.Collectors;
+import model.Sudoku;
 
 public class ParserMultidoku implements Parser {
     @Override

@@ -1,3 +1,5 @@
+package parser;
+
 import model.Block;
 import model.Pair;
 import model.Sudoku;

@@ -1,3 +1,5 @@
+package parser;
+
 import model.Sudoku;
 
 public interface Parser {
