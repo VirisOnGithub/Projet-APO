@@ -35,7 +35,6 @@ public class ParserNxN implements Parser {
             System.out.println("Error");
             System.err.println("File not found: " + e.getMessage());
         }
-
         ArrayList<Pair<Integer, Integer>> cells = new ArrayList<>();
         ArrayList<Block> blocks = new ArrayList<>();
 
