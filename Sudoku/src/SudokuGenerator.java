@@ -11,11 +11,11 @@ import model.Block;
 public class SudokuGenerator {
     private static final Random RANDOM = new Random();
 
-    public static String[][] generateSudoku(int blockSize, String difficulty, boolean irregularBlocks) {
+    public static ArrayList<Pair<Integer, Integer>> generateSudoku(int blockSize, String difficulty, boolean irregularBlocks) {
         int size = blockSize * blockSize;
         int[][] grid = new int[size][size];
         fillGrid(grid, size);
-        String[][] formattedGrid = irregularBlocks ? formatGridWithRandomBlocks(grid, size) : formatGridWithBlocks(grid, size);
+        ArrayList<Pair<Integer, Integer>> formattedGrid = irregularBlocks ? formatGridWithRandomBlocks(grid, size) : formatGridWithBlocks(grid, size);
         removeNumbers(formattedGrid, size, difficulty);
         if (!isSolvable(formattedGrid, size)) {
             return generateSudoku(blockSize, difficulty, irregularBlocks);
@@ -37,11 +37,11 @@ public class SudokuGenerator {
                             grid[row][col] = 0;
                         }
                     }
-                    return false;
+                    return false; // Return false if no number is valid
                 }
             }
         }
-        return true;
+        return true; // Return true if the grid is completely filled
     }
 
     private static List<Integer> getShuffledNumbers(int size) {
@@ -72,83 +72,86 @@ public class SudokuGenerator {
         return true;
     }
 
-    private static String[][] formatGridWithBlocks(int[][] grid, int size) {
-        String[][] formattedGrid = new String[size][size];
+    private static ArrayList<Pair<Integer, Integer>> formatGridWithBlocks(int[][] grid, int size) {
+        ArrayList<Pair<Integer, Integer>> formattedGrid = new ArrayList<>();
         int subgridSize = (int) Math.sqrt(size);
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
                 int blockIndex = (row / subgridSize) * subgridSize + (col / subgridSize);
-                formattedGrid[row][col] = grid[row][col] + ":" + blockIndex;
+                formattedGrid.add(new Pair<>(grid[row][col], blockIndex));
             }
         }
         return formattedGrid;
     }
 
-    private static String[][] formatGridWithRandomBlocks(int[][] grid, int size) {
-        String[][] formattedGrid = new String[size][size];
+    private static ArrayList<Pair<Integer, Integer>> formatGridWithRandomBlocks(int[][] grid, int size) {
+        ArrayList<Pair<Integer, Integer>> formattedGrid = new ArrayList<>();
         List<Integer> blockIndices = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            blockIndices.add(i);
+            for (int j = 0; j < size; j++) {
+                blockIndices.add(i);
+            }
         }
         Collections.shuffle(blockIndices);
-        List<Integer> cellIndices = new ArrayList<>();
-        for (int i = 0; i < size * size; i++) {
-            cellIndices.add(i);
-        }
-        Collections.shuffle(cellIndices);
 
         for (int i = 0; i < size * size; i++) {
-            int row = cellIndices.get(i) / size;
-            int col = cellIndices.get(i) % size;
-            formattedGrid[row][col] = grid[row][col] + ":" + blockIndices.get(i % size);
+            int row = i / size;
+            int col = i % size;
+            formattedGrid.add(new Pair<>(grid[row][col], blockIndices.get(i)));
         }
         return formattedGrid;
     }
 
-    private static void removeNumbers(String[][] grid, int size, String difficulty) {
+    private static void removeNumbers(ArrayList<Pair<Integer, Integer>> grid, int size, String difficulty) {
         int cellsToRemove = switch (difficulty.toLowerCase()) {
             case "facile" -> size * size / 4;
             case "moyen" -> size * size / 2;
             case "difficile" -> size * size * 3 / 4;
             default -> throw new IllegalArgumentException("Invalid difficulty level: " + difficulty);
         };
+
         while (cellsToRemove > 0) {
-            int row = RANDOM.nextInt(size);
-            int col = RANDOM.nextInt(size);
-            if (!grid[row][col].startsWith("0:")) {
-                String[] parts = grid[row][col].split(":");
-                grid[row][col] = "0:" + parts[1];
-                cellsToRemove--;
+            int index = RANDOM.nextInt(size * size);
+            Pair<Integer, Integer> originalPair = grid.get(index);
+            if (originalPair.first != 0) {
+                grid.set(index, new Pair<>(0, originalPair.second));
+                if (!isSolvable(grid, size)) {
+                    grid.set(index, originalPair); // Put the number back if not solvable
+                } else {
+                    cellsToRemove--;
+                }
             }
         }
     }
 
-    private static boolean isSolvable(String[][] grid, int size) {
-        ArrayList<Pair<Integer, Integer>> cells = new ArrayList<>();
+    private static boolean isSolvable(ArrayList<Pair<Integer, Integer>> grid, int size) {
         ArrayList<Block> blocks = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             blocks.add(new Block());
         }
-        for (int row = 0; row < size; row++) {
-            for (int col = 0; col < size; col++) {
-                String[] parts = grid[row][col].split(":");
-                int value = Integer.parseInt(parts[0]);
-                int blockIndex = Integer.parseInt(parts[1]);
-                cells.add(new Pair<>(value, blockIndex));
-                if (value != 0) {
-                    blocks.get(blockIndex).addCase(row * size + col);
-                }
+        for (int i = 0; i < grid.size(); i++) {
+            int value = grid.get(i).first;
+            int blockIndex = grid.get(i).second;
+            if (value != 0) {
+                blocks.get(blockIndex).addCase(i);
             }
         }
-        Sudoku sudoku = new Sudoku(cells, new Pair<>(size, size), blocks);
-        sudoku.solveUsingBacktracking();
+        Sudoku sudoku = new Sudoku(grid, new Pair<>(size, size), blocks);
+        sudoku.solveUsingRules();
         return sudoku.solved;
     }
 
-    public static void writeSudokuToFile(String[][] sudoku, String filePath) {
+    public static void writeSudokuToFile(ArrayList<Pair<Integer, Integer>> sudoku, String filePath, int blockSize) {
+        int size = blockSize * blockSize;
         try (FileWriter writer = new FileWriter(filePath)) {
-            for (String[] row : sudoku) {
-                writer.write(String.join(",", row));
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    int index = i * size + j;
+                    writer.write(sudoku.get(index).first + ":" + sudoku.get(index).second);
+                    if (j < size - 1) {
+                        writer.write(",");
+                    }
+                }
                 writer.write("\n");
             }
         } catch (IOException e) {

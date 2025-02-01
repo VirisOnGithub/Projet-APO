@@ -1,5 +1,7 @@
+import model.Pair;
 import model.Sudoku;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -40,8 +42,8 @@ public class Main {
         String difficulty = sc.next();
         System.out.print("Voulez-vous des blocs irréguliers (oui/non)? ");
         boolean irregularBlocks = sc.next().equalsIgnoreCase("oui");
-        String[][] sudoku = SudokuGenerator.generateSudoku(blockSize, difficulty, irregularBlocks);
-        SudokuGenerator.writeSudokuToFile(sudoku, "src/resources/" + blockSize + "x" + blockSize + ".csv");
+        ArrayList<Pair<Integer,Integer>> sudoku = SudokuGenerator.generateSudoku(blockSize, difficulty, irregularBlocks);
+        SudokuGenerator.writeSudokuToFile(sudoku, "src/resources/" + blockSize + "x" + blockSize + ".csv", blockSize);
         System.out.println("Sudoku généré avec succès et enregistré dans src/resources/" + blockSize + "x" + blockSize + ".csv");
     }
 
@@ -50,15 +52,9 @@ public class Main {
         Sudoku s;
         System.out.println("Taille du sudoku (2, 3, 4, 5, 6, 7, 8, 9) ?");
         int taille = sc.nextInt();
-        System.out.println("Sudoku avec blocs normaux ou diformes ? (1/2)");
-        int choix = sc.nextInt();
-        if (choix == 2) {
-            s = (new SplitBlocksParser()).parse((System.getProperty("os.name").equals("Linux") ? "src/resources/" : "Sudoku\\src\\resources\\") + taille + "x" + taille + (hard ? "hard" : "") + ".csv");
-        } else {
-            s = (new ParserNxN()).parse((System.getProperty("os.name").equals("Linux") ? "src/resources/" : "Sudoku\\src\\resources\\") + taille + "x" + taille + (hard ? "hard" : "") + ".csv");
-        }
+        s = (new SplitBlocksParser()).parse((System.getProperty("os.name").equals("Linux") ? "src/resources/" : "Sudoku\\src\\resources\\") + taille + "x" + taille + (hard ? "hard" : "") + ".csv");
         System.out.println("Choisissez une méthode de résolution (backtracking/règles) (1/2)");
-        choix = sc.nextInt();
+        int choix = sc.nextInt();
         System.out.println("Solving...\n\n\n");
         long time = System.currentTimeMillis();
         if (choix == 1) {
@@ -69,5 +65,6 @@ public class Main {
         System.out.println("Time: " + (System.currentTimeMillis() - time) + "ms");
         System.out.println(s);
         System.out.println(s.basicToString());
+        System.out.println("Sudoku résolu avec succès");
     }
 }

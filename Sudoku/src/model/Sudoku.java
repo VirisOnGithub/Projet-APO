@@ -24,6 +24,12 @@ public class Sudoku {
         ANSI_HASH_MAP.put(7, "\u001B[37m");
         ANSI_HASH_MAP.put(8, "\u001B[38;5;208m");
         ANSI_HASH_MAP.put(9, "\u001B[38;5;196m");
+        ANSI_HASH_MAP.put(10, "\u001B[38;5;202m");
+        ANSI_HASH_MAP.put(11, "\u001B[38;5;214m");
+        ANSI_HASH_MAP.put(12, "\u001B[38;5;220m");
+        ANSI_HASH_MAP.put(13, "\u001B[38;5;226m");
+        ANSI_HASH_MAP.put(14, "\u001B[38;5;118m");
+        ANSI_HASH_MAP.put(15, "\u001B[38;5;46m");
     }
 
     public Sudoku(ArrayList<Pair<Integer, Integer>> sudoku, Pair<Integer, Integer> dimensions, ArrayList<Block> blocks) {
@@ -34,17 +40,29 @@ public class Sudoku {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        int maxSizeNumber = 0;
+        for (int i = 0; i < dimensions.first; i++) {
+            for (int j = 0; j < dimensions.second; j++) {
+                int index = i * dimensions.second + j;
+                int sizeNumber = String.valueOf(sudoku.get(index).first).length();
+                if (sizeNumber > maxSizeNumber) {
+                    maxSizeNumber = sizeNumber;
+                }
+            }
+        }
         for (int i = 0; i < dimensions.first; i++) {
             for (int j = 0; j < dimensions.second; j++) {
                 int index = i * dimensions.second + j;
                 sb.append(ANSI_HASH_MAP.get(sudoku.get(index).second));
                 if (sudoku.get(index).first == 0) {
-                    sb.append(" ");
+                    sb.append(" ".repeat(maxSizeNumber));
                 } else {
+                    int sizeNumber = String.valueOf(sudoku.get(index).first).length();
+                    sb.append(" ".repeat(Math.max(0, maxSizeNumber - sizeNumber)));
                     sb.append(sudoku.get(index).first);
                 }
                 sb.append(ANSI_RESET);
-                if (j < 8) {
+                if (j < dimensions.second - 1) {
                     sb.append(" ");
                 }
             }
@@ -102,30 +120,28 @@ public class Sudoku {
                             possibleValues.add(k);
                         }
 
-                        // Check if value in column are already taken
+                        // Check if value in column is already taken
                         for (int k = 0; k < dimensions.first; k++) {
                             int index1 = k * dimensions.second + j;
-                            possibleValues.remove(sudoku.get(index1).first);
+                            possibleValues.remove((Integer) sudoku.get(index1).first);
                         }
 
-                        // Check if value in row are already taken
+                        // Check if value in row is already taken
                         for (int k = 0; k < dimensions.second; k++) {
                             int index1 = i * dimensions.second + k;
-                            possibleValues.remove(sudoku.get(index1).first);
+                            possibleValues.remove((Integer) sudoku.get(index1).first);
                         }
 
-                        // Check if value in block are already taken
-                        for(int indexSudoku: blocks.get(sudoku.get(index).second).getCases()){
+                        // Check if value in block is already taken
+                        for (int indexSudoku : blocks.get(sudoku.get(index).second).getCases()) {
                             if (indexSudoku != index) {
-                                possibleValues.remove(sudoku.get(indexSudoku).first);
+                                possibleValues.remove((Integer) sudoku.get(indexSudoku).first);
                             }
                         }
 
                         if (possibleValues.size() == 1) {
-                            sudoku.set(index, new Pair<>(possibleValues.getFirst(), sudoku.get(index).second));
-                            System.out.println(blocks.get(sudoku.get(index).second));
+                            sudoku.set(index, new Pair<>(possibleValues.get(0), sudoku.get(index).second));
                             blocks.get(sudoku.get(index).second).getCases().add(index);
-                            System.out.println("Index " + sudoku.get(index).second + ": - " + blocks.get(sudoku.get(index).second));
                             progressMade = true;
                         } else if (possibleValues.isEmpty()) {
                             return;
