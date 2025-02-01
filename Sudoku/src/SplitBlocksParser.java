@@ -31,7 +31,7 @@ public class SplitBlocksParser implements Parser {
                                 adjustSize(blocks, blockIndex);
                             }
                             if (value != 0) {
-                                blocks.get(blockIndex).addCase(count.get());
+                                blocks.get(blockIndex).addCase(count.get(), blockIndex);
                             }
                             count.getAndSet(count.get() + 1);
                             return new Pair<>(value, blockIndex);

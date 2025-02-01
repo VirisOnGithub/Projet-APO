@@ -131,7 +131,6 @@ public class Sudoku {
                             int index1 = i * dimensions.second + k;
                             possibleValues.remove((Integer) sudoku.get(index1).first);
                         }
-
                         // Check if value in block is already taken
                         for (int indexSudoku : blocks.get(sudoku.get(index).second).getCases()) {
                             if (indexSudoku != index) {
@@ -148,6 +147,9 @@ public class Sudoku {
                         }
                     }
                 }
+            }
+            if (!progressMade) {
+                return;
             }
         }
     }

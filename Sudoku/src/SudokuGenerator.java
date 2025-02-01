@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import model.Sudoku;
 import model.Pair;
 import model.Block;
 
@@ -14,12 +13,10 @@ public class SudokuGenerator {
     public static ArrayList<Pair<Integer, Integer>> generateSudoku(int blockSize, String difficulty, boolean irregularBlocks) {
         int size = blockSize * blockSize;
         int[][] grid = new int[size][size];
+        ArrayList<Block> blocks = new ArrayList<>();
         fillGrid(grid, size);
-        ArrayList<Pair<Integer, Integer>> formattedGrid = irregularBlocks ? formatGridWithRandomBlocks(grid, size) : formatGridWithBlocks(grid, size);
+        ArrayList<Pair<Integer, Integer>> formattedGrid = irregularBlocks ? formatGridWithRandomBlocks(grid, size) : formatGridWithBlocks(grid, size, blocks);
         removeNumbers(formattedGrid, size, difficulty);
-        if (!isSolvable(formattedGrid, size)) {
-            return generateSudoku(blockSize, difficulty, irregularBlocks);
-        }
         return formattedGrid;
     }
 
@@ -72,16 +69,26 @@ public class SudokuGenerator {
         return true;
     }
 
-    private static ArrayList<Pair<Integer, Integer>> formatGridWithBlocks(int[][] grid, int size) {
+    private static ArrayList<Pair<Integer, Integer>> formatGridWithBlocks(int[][] grid, int size, ArrayList<Block> blocks) {
         ArrayList<Pair<Integer, Integer>> formattedGrid = new ArrayList<>();
         int subgridSize = (int) Math.sqrt(size);
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
                 int blockIndex = (row / subgridSize) * subgridSize + (col / subgridSize);
                 formattedGrid.add(new Pair<>(grid[row][col], blockIndex));
+                if (blocks.size() <= blockIndex) {
+                    adjustSize(blocks, blockIndex);
+                }
+                blocks.get(blockIndex).addCase(grid[row][col], blockIndex);
             }
         }
         return formattedGrid;
+    }
+
+    private static void adjustSize(ArrayList<Block> blocks, int size) {
+        while (blocks.size() <= size) {
+            blocks.add(new Block());
+        }
     }
 
     private static ArrayList<Pair<Integer, Integer>> formatGridWithRandomBlocks(int[][] grid, int size) {
@@ -115,30 +122,9 @@ public class SudokuGenerator {
             Pair<Integer, Integer> originalPair = grid.get(index);
             if (originalPair.first != 0) {
                 grid.set(index, new Pair<>(0, originalPair.second));
-                if (!isSolvable(grid, size)) {
-                    grid.set(index, originalPair); // Put the number back if not solvable
-                } else {
-                    cellsToRemove--;
-                }
+                cellsToRemove--;
             }
         }
-    }
-
-    private static boolean isSolvable(ArrayList<Pair<Integer, Integer>> grid, int size) {
-        ArrayList<Block> blocks = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            blocks.add(new Block());
-        }
-        for (int i = 0; i < grid.size(); i++) {
-            int value = grid.get(i).first;
-            int blockIndex = grid.get(i).second;
-            if (value != 0) {
-                blocks.get(blockIndex).addCase(i);
-            }
-        }
-        Sudoku sudoku = new Sudoku(grid, new Pair<>(size, size), blocks);
-        sudoku.solveUsingRules();
-        return sudoku.solved;
     }
 
     public static void writeSudokuToFile(ArrayList<Pair<Integer, Integer>> sudoku, String filePath, int blockSize) {

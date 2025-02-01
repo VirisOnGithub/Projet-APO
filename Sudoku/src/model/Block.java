@@ -3,26 +3,28 @@ package model;
 import java.util.ArrayList;
 
 public class Block {
-  private ArrayList<Integer> cases;
+  private ArrayList<Pair<Integer,Integer>> cases;
 
   public Block() {
     this.cases = new ArrayList<>();
   }
 
   public ArrayList<Integer> getCases() {
+    ArrayList<Integer> cases = new ArrayList<>();
+    for (Pair<Integer, Integer> aCase : this.cases) {
+      cases.add(aCase.first);
+    }
     return cases;
   }
 
-  public void addCase(Integer indexCase) {
-    this.cases.add(indexCase);
+  public void addCase(Integer value, Integer indexBlock) {
+    cases.add(new Pair<>(value, indexBlock));
   }
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    for (Integer aCase : cases) {
-      sb.append(aCase).append("-");
-    }
-    return sb.toString();
+    return "Block{" +
+            "cases=" + cases +
+            '}';
   }
 }
