@@ -11,14 +11,14 @@ import model.Block;
 public class SudokuGenerator {
     private static final Random RANDOM = new Random();
 
-    public static String[][] generateSudoku(int blockSize, String difficulty) {
+    public static String[][] generateSudoku(int blockSize, String difficulty, boolean irregularBlocks) {
         int size = blockSize * blockSize;
         int[][] grid = new int[size][size];
         fillGrid(grid, size);
-        String[][] formattedGrid = formatGridWithBlocks(grid, size);
+        String[][] formattedGrid = irregularBlocks ? formatGridWithRandomBlocks(grid, size) : formatGridWithBlocks(grid, size);
         removeNumbers(formattedGrid, size, difficulty);
         if (!isSolvable(formattedGrid, size)) {
-            return generateSudoku(blockSize, difficulty);
+            return generateSudoku(blockSize, difficulty, irregularBlocks);
         }
         return formattedGrid;
     }
@@ -80,6 +80,27 @@ public class SudokuGenerator {
                 int blockIndex = (row / subgridSize) * subgridSize + (col / subgridSize);
                 formattedGrid[row][col] = grid[row][col] + ":" + blockIndex;
             }
+        }
+        return formattedGrid;
+    }
+
+    private static String[][] formatGridWithRandomBlocks(int[][] grid, int size) {
+        String[][] formattedGrid = new String[size][size];
+        List<Integer> blockIndices = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            blockIndices.add(i);
+        }
+        Collections.shuffle(blockIndices);
+        List<Integer> cellIndices = new ArrayList<>();
+        for (int i = 0; i < size * size; i++) {
+            cellIndices.add(i);
+        }
+        Collections.shuffle(cellIndices);
+
+        for (int i = 0; i < size * size; i++) {
+            int row = cellIndices.get(i) / size;
+            int col = cellIndices.get(i) % size;
+            formattedGrid[row][col] = grid[row][col] + ":" + blockIndices.get(i % size);
         }
         return formattedGrid;
     }
