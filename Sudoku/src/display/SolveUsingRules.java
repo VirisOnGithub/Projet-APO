@@ -4,22 +4,21 @@ import model.Sudoku;
 import parser.SplitBlocksParser;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 
-public class LoadSudoku extends AbstractAction {
+public class SolveUsingRules extends AbstractAction {
     private SudokuFrame frame;
-    private TextArea sudoku;
 
-    public LoadSudoku(SudokuFrame frame, String txt) {
+    public SolveUsingRules(SudokuFrame frame, String txt) {
         super(txt);
         this.frame = frame;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // Load the sudoku from the file
+        // Solve the sudoku
         Sudoku s = (new SplitBlocksParser()).parse((System.getProperty("os.name").equals("Linux") ? "src/resources/" : "Sudoku\\src\\resources\\") + frame.getTextField().getText());
+        s.solveUsingRules();
         frame.getSudoku().setText(s.basicToString());
     }
 }
