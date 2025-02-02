@@ -9,16 +9,25 @@ public class Block {
     this.cases = new ArrayList<>();
   }
 
-  public ArrayList<Integer> getCases() {
-    ArrayList<Integer> cases = new ArrayList<>();
-    for (Pair<Integer, Integer> aCase : this.cases) {
-      cases.add(aCase.first);
-    }
+  public ArrayList<Pair<Integer,Integer>> getCases() {
     return cases;
   }
 
   public void addCase(Integer value, Integer indexBlock) {
     cases.add(new Pair<>(value, indexBlock));
+  }
+
+    public void removeCase(Integer value, Integer indexBlock) {
+        cases.remove(new Pair<>(value, indexBlock));
+    }
+
+  public boolean isValid(Integer number) {
+    for (Pair<Integer, Integer> aCase : cases) {
+      if (aCase.getFirst().equals(number)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @Override

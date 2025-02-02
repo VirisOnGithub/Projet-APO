@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+
 import model.Pair;
 import model.Block;
 
@@ -14,32 +15,11 @@ public class SudokuGenerator {
         int size = blockSize * blockSize;
         int[][] grid = new int[size][size];
         ArrayList<Block> blocks = new ArrayList<>();
-        fillGrid(grid, size);
-        ArrayList<Pair<Integer, Integer>> formattedGrid = irregularBlocks ? formatGridWithRandomBlocks(grid, size) : formatGridWithBlocks(grid, size, blocks);
+        ArrayList<Pair<Integer, Integer>> formattedGrid = irregularBlocks ? formatGridWithRandomBlocks(grid, size, blocks) : formatGridWithBlocks(grid, size, blocks);
         removeNumbers(formattedGrid, size, difficulty);
         return formattedGrid;
     }
 
-    private static boolean fillGrid(int[][] grid, int size) {
-        for (int row = 0; row < size; row++) {
-            for (int col = 0; col < size; col++) {
-                if (grid[row][col] == 0) {
-                    List<Integer> numbers = getShuffledNumbers(size);
-                    for (int number : numbers) {
-                        if (isValid(grid, row, col, number, size)) {
-                            grid[row][col] = number;
-                            if (fillGrid(grid, size)) {
-                                return true;
-                            }
-                            grid[row][col] = 0;
-                        }
-                    }
-                    return false; // Return false if no number is valid
-                }
-            }
-        }
-        return true; // Return true if the grid is completely filled
-    }
 
     private static List<Integer> getShuffledNumbers(int size) {
         List<Integer> numbers = new ArrayList<>();
@@ -50,35 +30,46 @@ public class SudokuGenerator {
         return numbers;
     }
 
-    private static boolean isValid(int[][] grid, int row, int col, int number, int size) {
+    private static boolean isValid(int[][] grid, int row, int col, int number, int size, ArrayList<Block> blocks) {
         for (int i = 0; i < size; i++) {
             if (grid[row][i] == number || grid[i][col] == number) {
                 return false;
             }
         }
         int subgridSize = (int) Math.sqrt(size);
-        int startRow = row - row % subgridSize;
-        int startCol = col - col % subgridSize;
-        for (int i = 0; i < subgridSize; i++) {
-            for (int j = 0; j < subgridSize; j++) {
-                if (grid[startRow + i][startCol + j] == number) {
+        int subgridRow = row / subgridSize;
+        int subgridCol = col / subgridSize;
+        for (int i = subgridRow * subgridSize; i < subgridRow * subgridSize + subgridSize; i++) {
+            for (int j = subgridCol * subgridSize; j < subgridCol * subgridSize + subgridSize; j++) {
+                if (grid[i][j] == number) {
                     return false;
                 }
             }
         }
-        return true;
+        int blockIndex = subgridRow * subgridSize + subgridCol;
+        return blocks.get(blockIndex).isValid(number);
     }
 
     private static ArrayList<Pair<Integer, Integer>> formatGridWithBlocks(int[][] grid, int size, ArrayList<Block> blocks) {
         ArrayList<Pair<Integer, Integer>> formattedGrid = new ArrayList<>();
         int subgridSize = (int) Math.sqrt(size);
+
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
                 int blockIndex = (row / subgridSize) * subgridSize + (col / subgridSize);
-                formattedGrid.add(new Pair<>(grid[row][col], blockIndex));
                 if (blocks.size() <= blockIndex) {
                     adjustSize(blocks, blockIndex);
                 }
+                if (grid[row][col] == 0) {
+                    List<Integer> numbers = getShuffledNumbers(size);
+                    for (int number : numbers) {
+                        if (isValid(grid, row, col, number, size, blocks)) {
+                            grid[row][col] = number;
+                            break;
+                        }
+                    }
+                }
+                formattedGrid.add(new Pair<>(grid[row][col], blockIndex));
                 blocks.get(blockIndex).addCase(grid[row][col], blockIndex);
             }
         }
@@ -91,23 +82,50 @@ public class SudokuGenerator {
         }
     }
 
-    private static ArrayList<Pair<Integer, Integer>> formatGridWithRandomBlocks(int[][] grid, int size) {
-        ArrayList<Pair<Integer, Integer>> formattedGrid = new ArrayList<>();
-        List<Integer> blockIndices = new ArrayList<>();
+    private static ArrayList<Pair<Integer, Integer>> formatGridWithRandomBlocks(int[][] grid, int size, ArrayList<Block> blocks) {
+        ArrayList<Pair<Integer,Integer>> test = formatGridWithBlocks(grid, size, blocks);
+        do{
+            Collections.shuffle(test);
+        } while (!isSudokuValid(test, blocks));
+        return test;
+    }
+
+    public static boolean isSudokuValid(ArrayList<Pair<Integer, Integer>> sudoku, ArrayList<Block> blocks) {
+        int size = (int) Math.sqrt(sudoku.size());
         for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                blockIndices.add(i);
+            if (!isRowValid(sudoku, i, size) || !isColumnValid(sudoku, i, size) || !isBlockValid(sudoku, blocks.get(i), size)) {
+                return false;
             }
         }
-        Collections.shuffle(blockIndices);
-
-        for (int i = 0; i < size * size; i++) {
-            int row = i / size;
-            int col = i % size;
-            formattedGrid.add(new Pair<>(grid[row][col], blockIndices.get(i)));
-        }
-        return formattedGrid;
+        return true;
     }
+
+    private static boolean isRowValid(ArrayList<Pair<Integer, Integer>> sudoku, int row, int size) {
+        List<Integer> numbers = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            numbers.add(sudoku.get(row * size + i).first);
+        }
+        return numbers.stream().distinct().count() == size;
+    }
+
+    private static boolean isColumnValid(ArrayList<Pair<Integer, Integer>> sudoku, int col, int size) {
+        List<Integer> numbers = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            numbers.add(sudoku.get(i * size + col).first);
+        }
+        return numbers.stream().distinct().count() == size;
+    }
+
+    private static boolean isBlockValid(ArrayList<Pair<Integer, Integer>> sudoku, Block block, int size) {
+        List<Integer> numbers = new ArrayList<>();
+        for (Pair<Integer, Integer> pair : sudoku) {
+            if (pair.second == block.getCases().get(0).second) {
+                numbers.add(pair.first);
+            }
+        }
+        return numbers.stream().distinct().count() == size;
+    }
+
 
     private static void removeNumbers(ArrayList<Pair<Integer, Integer>> grid, int size, String difficulty) {
         int cellsToRemove = switch (difficulty.toLowerCase()) {
@@ -119,10 +137,13 @@ public class SudokuGenerator {
 
         while (cellsToRemove > 0) {
             int index = RANDOM.nextInt(size * size);
-            Pair<Integer, Integer> originalPair = grid.get(index);
-            if (originalPair.first != 0) {
-                grid.set(index, new Pair<>(0, originalPair.second));
-                cellsToRemove--;
+                if (index < grid.size()) {
+                    Pair<Integer, Integer> originalPair = grid.get(index);
+
+                if (originalPair.first != 0) {
+                    grid.set(index, new Pair<>(0, originalPair.second));
+                    cellsToRemove--;
+            }
             }
         }
     }

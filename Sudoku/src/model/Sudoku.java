@@ -132,15 +132,15 @@ public class Sudoku {
                             possibleValues.remove((Integer) sudoku.get(index1).first);
                         }
                         // Check if value in block is already taken
-                        for (int indexSudoku : blocks.get(sudoku.get(index).second).getCases()) {
-                            if (indexSudoku != index) {
-                                possibleValues.remove((Integer) sudoku.get(indexSudoku).first);
+                        for (Pair<Integer, Integer> indexSudoku : blocks.get(sudoku.get(index).second).getCases()) {
+                            if (indexSudoku.second != index) {
+                                possibleValues.remove((Integer) sudoku.get(indexSudoku.second).first);
                             }
                         }
 
                         if (possibleValues.size() == 1) {
                             sudoku.set(index, new Pair<>(possibleValues.get(0), sudoku.get(index).second));
-                            blocks.get(sudoku.get(index).second).getCases().add(index);
+                            blocks.get(sudoku.get(index).second).getCases().add(new Pair<>(possibleValues.get(0), index));
                             progressMade = true;
                         } else if (possibleValues.isEmpty()) {
                             return;
