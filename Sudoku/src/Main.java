@@ -1,5 +1,6 @@
 import model.Pair;
 import model.Sudoku;
+import parser.SplitBlocksParser;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -35,6 +36,10 @@ public class Main {
         sc.close();
     }
 
+    /**
+     * Generate a Sudoku puzzle
+     * @param sc The scanner to read user input
+     */
     private static void generateSudoku(Scanner sc) {
         System.out.print("Entrer la taille du bloc du Sudoku: ");
         int blockSize = sc.nextInt();
@@ -52,6 +57,10 @@ public class Main {
         System.out.println("Sudoku généré avec succès et enregistré dans src/resources/" + blockSize + "x" + blockSize + ".csv");
     }
 
+    /**
+     * Solve a Sudoku puzzle
+     * @param sc The scanner to read user input
+     */
     private static void solveSudoku(Scanner sc) {
         boolean hard = false;
         Sudoku s;
