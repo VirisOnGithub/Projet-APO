@@ -13,6 +13,18 @@ public class Multidoku implements Doku {
         this.bindBlocks = bindBlocks;
     }
 
+    public Pair<Integer, Integer> hasBindBlock(int indexSudoku1, int blockSudoku1) {
+        for (ArrayList<Integer> bindBlock : bindBlocks) {
+            if (bindBlock.get(0) == indexSudoku1 && bindBlock.get(1) == blockSudoku1) {
+                return new Pair<>(bindBlock.get(2), bindBlock.get(3));
+            }
+            if(bindBlock.get(2) == indexSudoku1 && bindBlock.get(3) == blockSudoku1){
+                return new Pair<>(bindBlock.get(0), bindBlock.get(1));
+            }
+        }
+        return null;
+    }
+
     public boolean checkCoherence(){
         for (ArrayList<Integer> bindBlock : bindBlocks) {
             int indexSudoku1 = bindBlock.get(0);
@@ -42,7 +54,6 @@ public class Multidoku implements Doku {
         boolean solved = false;
         for(Sudoku sudoku : sudokus){
             boolean progressMade = true;
-            int blockSize = (int) Math.sqrt(sudoku.dimensions.first);
             while (!solved && progressMade) {
                 solved = true;
                 progressMade = false;
@@ -51,28 +62,22 @@ public class Multidoku implements Doku {
                         int index = i * sudoku.dimensions.second + j;
                         if (sudoku.sudoku.get(index).first == 0) {
                             solved = false;
-                            ArrayList<Integer> possibleValues = new ArrayList<>();
-                            for (int k = 1; k <= sudoku.dimensions.first; k++) {
-                                possibleValues.add(k);
-                            }
-                            for (int k = 0; k < sudoku.dimensions.first; k++) {
-                                int index1 = k * sudoku.dimensions.second + j;
-                                possibleValues.remove(sudoku.sudoku.get(index1).first);
-                            }
-                            for (int k = 0; k < sudoku.dimensions.second; k++) {
-                                int index1 = i * sudoku.dimensions.second + k;
-                                possibleValues.remove(sudoku.sudoku.get(index1).first);
-                            }
-                            int boxRow = i / blockSize;
-                            int boxCol = j / blockSize;
-                            for (int k = 0; k < blockSize; k++) {
-                                for (int l = 0; l < blockSize; l++) {
-                                    int index1 = (boxRow * blockSize + k) * sudoku.dimensions.second + (boxCol * blockSize + l);
-                                    possibleValues.remove(sudoku.sudoku.get(index1).first);
+
+                            ArrayList<Integer> possibleValues = getPossibleValues(sudoku, i, j);
+
+                            Pair<Integer, Integer> bindBlock = hasBindBlock(sudokus.indexOf(sudoku), sudoku.sudoku.get(index).second);
+                            if (bindBlock != null) {
+                                List<Integer> block = sudokus.get(bindBlock.first).getBlock(bindBlock.second);
+                                for (Integer integer : block) {
+                                    if (integer != 0) {
+                                        possibleValues.remove((Integer) integer);
+                                    }
                                 }
                             }
+
                             if (possibleValues.size() == 1) {
-                                sudoku.sudoku.set(index, new Pair<>(possibleValues.getFirst(), 9));
+                                sudoku.sudoku.set(index, new Pair<>(possibleValues.get(0), sudoku.sudoku.get(index).second));
+                                sudoku.blocks.get(sudoku.sudoku.get(index).second).getCases().add(index);
                                 progressMade = true;
                             } else if (possibleValues.isEmpty()) {
                                 return;
@@ -97,6 +102,34 @@ public class Multidoku implements Doku {
                 }
             }
         }
+    }
+
+    private ArrayList<Integer> getPossibleValues(Sudoku sudoku, int i, int j) {
+        ArrayList<Integer> possibleValues = new ArrayList<>();
+        // Add all possibilities to the case
+        for (int k = 1; k <= sudoku.dimensions.first; k++) {
+            possibleValues.add(k);
+        }
+
+        // Check if value in column is already taken
+        for (int k = 0; k < sudoku.dimensions.first; k++) {
+            int index1 = k * sudoku.dimensions.second + j;
+            possibleValues.remove((Integer) sudoku.sudoku.get(index1).first);
+        }
+
+        // Check if value in row is already taken
+        for (int k = 0; k < sudoku.dimensions.second; k++) {
+            int index1 = i * sudoku.dimensions.second + k;
+            possibleValues.remove((Integer) sudoku.sudoku.get(index1).first);
+        }
+        int index = i * sudoku.dimensions.second + j;
+        // Check if value in block is already taken
+        for (int indexSudoku : sudoku.blocks.get(sudoku.sudoku.get(index).second).getCases()) {
+            if (indexSudoku != index) {
+                possibleValues.remove((Integer) sudoku.sudoku.get(indexSudoku).first);
+            }
+        }
+        return possibleValues;
     }
 
 
