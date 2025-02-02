@@ -2,6 +2,9 @@ package display;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * The SudokuFrame class represents the frame of the Sudoku application.
+ */
 public class SudokuFrame extends JFrame {
     private static final int FRAME_WIDTH = 600;
     private static final int FRAME_HEIGHT = 600;
@@ -9,6 +12,9 @@ public class SudokuFrame extends JFrame {
     private JTextField textField;
     private TextArea sudoku;
 
+    /**
+     * Create the Sudoku frame
+     */
     public SudokuFrame() {
         this.setSize(FRAME_WIDTH, FRAME_HEIGHT);
         this.setTitle("Sudoku");
@@ -18,6 +24,10 @@ public class SudokuFrame extends JFrame {
         this.setContentPane(sudokuPanel());
     }
 
+    /**
+     * Create the Sudoku panel
+     * @return The Sudoku panel
+     */
     private JPanel sudokuPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
@@ -47,9 +57,18 @@ public class SudokuFrame extends JFrame {
         return panel;
     }
 
+    /**
+     * Get the text field
+     * @return The text field
+     */
     public JTextField getTextField() {
         return textField;
     }
+
+    /**
+     * Get the Sudoku text area
+     * @return The Sudoku text area
+     */
     public TextArea getSudoku() {
         return sudoku;
     }

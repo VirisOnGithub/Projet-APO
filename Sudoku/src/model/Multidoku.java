@@ -4,15 +4,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * The Multidoku class represents a Multidoku puzzle.
+ */
 public class Multidoku implements Doku {
     private ArrayList<Sudoku> sudokus;
     private ArrayList<ArrayList<Integer>> bindBlocks;
 
+    /**
+     * Create a Multidoku puzzle
+     * @param sudokus The Sudokus of the Multidoku puzzle
+     * @param bindBlocks The bind blocks of the Multidoku puzzle
+     */
     public Multidoku(ArrayList<Sudoku> sudokus, ArrayList<ArrayList<Integer>> bindBlocks) {
         this.sudokus = sudokus;
         this.bindBlocks = bindBlocks;
     }
 
+    /**
+     * Check if a block is already binded
+     * @param indexSudoku1 The index of the first Sudoku
+     * @param blockSudoku1 The index of the block in the first Sudoku
+     * @return The index of the second Sudoku and the index of the block in the second Sudoku if the block is already binded, null otherwise
+     */
     public Pair<Integer, Integer> hasBindBlock(int indexSudoku1, int blockSudoku1) {
         for (ArrayList<Integer> bindBlock : bindBlocks) {
             if (bindBlock.get(0) == indexSudoku1 && bindBlock.get(1) == blockSudoku1) {
@@ -25,6 +39,10 @@ public class Multidoku implements Doku {
         return null;
     }
 
+    /**
+     * Check if the Multidoku puzzle is coherent
+     * @return True if the Multidoku puzzle is coherent, false otherwise
+     */
     public boolean checkCoherence(){
         for (ArrayList<Integer> bindBlock : bindBlocks) {
             int indexSudoku1 = bindBlock.get(0);
@@ -42,14 +60,25 @@ public class Multidoku implements Doku {
         return true;
     }
 
+    /**
+     * Get the Sudokus of the Multidoku puzzle
+     * @return The Sudokus of the Multidoku puzzle
+     */
     public ArrayList<Sudoku> getSudokus() {
         return sudokus;
     }
 
+    /**
+     * Get the bind blocks of the Multidoku puzzle
+     * @return The bind blocks of the Multidoku puzzle
+     */
     public ArrayList<ArrayList<Integer>> getBindBlocks() {
         return bindBlocks;
     }
 
+    /**
+     * Solve the Multidoku puzzle using rules 
+     */
     public void solveUsingRules() {
         boolean solved = false;
         for(Sudoku sudoku : sudokus){
@@ -104,6 +133,13 @@ public class Multidoku implements Doku {
         }
     }
 
+    /**
+     * Get the possible values for a case
+     * @param sudoku The Sudoku puzzle
+     * @param i The row of the case
+     * @param j The column of the case
+     * @return The possible values for the case
+     */
     private ArrayList<Integer> getPossibleValues(Sudoku sudoku, int i, int j) {
         ArrayList<Integer> possibleValues = new ArrayList<>();
         // Add all possibilities to the case
@@ -133,6 +169,10 @@ public class Multidoku implements Doku {
     }
 
 
+    /**
+     * Prints the Multidoku puzzle to the output
+     */
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (Sudoku sudoku : sudokus) {

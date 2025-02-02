@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * The Sudoku class represents a Sudoku puzzle.
+ */
 public class Sudoku implements Doku {
     public ArrayList<Pair<Integer, Integer>> sudoku;
     public final ArrayList<Block> blocks;
@@ -13,6 +16,7 @@ public class Sudoku implements Doku {
     private static final String ANSI_RESET = "\u001B[0m";
     private static final HashMap<Integer, String> ANSI_HASH_MAP = new HashMap<>();
 
+    // Create a map of ANSI colors
     static {
         ANSI_HASH_MAP.put(0, "\u001B[30m");
         ANSI_HASH_MAP.put(1, "\u001B[31m");
@@ -32,12 +36,22 @@ public class Sudoku implements Doku {
         ANSI_HASH_MAP.put(15, "\u001B[38;5;46m");
     }
 
+    /**
+     * Create a Sudoku puzzle
+     * @param sudoku The Sudoku puzzle
+     * @param dimensions The dimensions of the Sudoku puzzle
+     * @param blocks The blocks of the Sudoku puzzle
+     */
     public Sudoku(ArrayList<Pair<Integer, Integer>> sudoku, Pair<Integer, Integer> dimensions, ArrayList<Block> blocks) {
         this.sudoku = sudoku;
         this.dimensions = dimensions;
         this.blocks = blocks;
     }
 
+    /**
+     * Prints the colored Sudoku puzzle with ANSI escape codes
+     */
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         int maxSizeNumber = 0;
@@ -71,6 +85,9 @@ public class Sudoku implements Doku {
         return sb.toString();
     }
 
+    /**
+     * Prints the Sudoku puzzle without colors
+     */
     public String basicToString() {
         // Find the maximum number of digits in the sudoku
         int maxSizeNumber = 0;
@@ -103,6 +120,9 @@ public class Sudoku implements Doku {
         return sb.toString();
     }
 
+    /**
+     * Solve the Sudoku puzzle using the rules (line, column, block)
+     */
     public void solveUsingRules() {
         boolean progressMade = true;
         while (!solved && progressMade) {
@@ -154,10 +174,17 @@ public class Sudoku implements Doku {
         }
     }
 
+    /**
+     * Solve the Sudoku puzzle using backtracking
+     */
     public void solveUsingBacktracking() {
         solveUsingBacktracking(0);
     }
 
+    /**
+     * Solve the Sudoku puzzle using backtracking
+     * @param index The index of the case to solve
+     */
     private void solveUsingBacktracking(int index) {
         if (index == dimensions.first * dimensions.second) {
             solved = true;
@@ -179,6 +206,11 @@ public class Sudoku implements Doku {
         }
     }
 
+    /**
+     * Check if the value at the index is valid
+     * @param index The index of the case to check
+     * @return True if the value is valid, false otherwise
+     */
     private boolean isValid(int index) {
         int i = index / dimensions.second;
         int j = index % dimensions.second;
@@ -208,6 +240,11 @@ public class Sudoku implements Doku {
         return true;
     }
 
+    /**
+     * Get the block of the Sudoku puzzle
+     * @param index The index of the block
+     * @return The block
+     */
     public List<Integer> getBlock(int index) {
         return sudoku.stream().filter(pair -> pair.second == index).map(pair -> pair.first).toList();
     }

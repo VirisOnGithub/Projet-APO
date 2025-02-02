@@ -6,14 +6,26 @@ import parser.SplitBlocksParser;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
+/**
+ * The SolveUsingRules class represents the action of solving a Sudoku puzzle using rules.
+ */
 public class SolveUsingRules extends AbstractAction {
     private SudokuFrame frame;
 
+    /**
+     * Create the action of solving a Sudoku puzzle using rules
+     * @param frame The Sudoku frame
+     * @param txt The text of the action
+     */
     public SolveUsingRules(SudokuFrame frame, String txt) {
         super(txt);
         this.frame = frame;
     }
 
+    /**
+     * Solve the Sudoku puzzle using rules
+     * @param e The event
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         // Solve the sudoku

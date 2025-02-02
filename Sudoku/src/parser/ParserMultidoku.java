@@ -12,7 +12,15 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * The ParserMultidoku class provides a method for parsing a Multidoku puzzle from a file.
+ */
 public class ParserMultidoku implements Parser {
+    /**
+     * Parse a Multidoku puzzle from a file
+     * @param path The path to the file containing the Multidoku puzzle
+     * @return The parsed Multidoku puzzle
+     */
     @Override
     public Multidoku parse(String path) {
         ArrayList<Sudoku> sudokus = new ArrayList<>();
@@ -64,6 +72,11 @@ public class ParserMultidoku implements Parser {
         return new Multidoku(sudokus, bindBlocks);
     }
 
+    /**
+     * Adjust the size of the blocks list
+     * @param blocks The list of blocks
+     * @param size The size to adjust to
+     */
     private void adjustSize(AtomicReference<ArrayList<Block>> blocks, int size) {
         while (blocks.get().size() <= size) {
             blocks.get().add(new Block());

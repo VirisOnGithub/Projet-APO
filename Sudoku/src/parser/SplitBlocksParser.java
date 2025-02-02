@@ -13,7 +13,15 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.System.exit;
 
+/**
+ * The SplitBlocksParser class provides a method for parsing a Sudoku puzzle with split blocks from a file (format: value:blockIndex).
+ */
 public class SplitBlocksParser implements Parser {
+    /**
+     * Parse a Sudoku puzzle with split blocks from a file
+     * @param path The path to the file containing the Sudoku puzzle
+     * @return The parsed Sudoku puzzle
+     */
     @Override
     public Sudoku parse(String path) {
         ArrayList<Pair<Integer, Integer>> grid = new ArrayList<>();
@@ -61,6 +69,11 @@ public class SplitBlocksParser implements Parser {
         return new Sudoku(grid, new Pair<>((int) sqrt,(int) sqrt), blocks);
     }
 
+    /**
+     * Adjust the size of the blocks list
+     * @param blocks The list of blocks
+     * @param size The size to adjust to
+     */
     private void adjustSize(ArrayList<Block> blocks, int size) {
         while (blocks.size() <= size) {
             blocks.add(new Block());
