@@ -9,7 +9,7 @@
 
 #### GIT
 
-https://github.com/VirisOnGithub/Projet-APO
+[https://github.com/VirisOnGithub/Projet-APO](https://github.com/VirisOnGithub/Projet-APO)
 
 #### Déroulement
 
