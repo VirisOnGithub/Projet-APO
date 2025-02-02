@@ -106,7 +106,7 @@ public class Multidoku implements Doku {
 
                             if (possibleValues.size() == 1) {
                                 sudoku.sudoku.set(index, new Pair<>(possibleValues.get(0), sudoku.sudoku.get(index).second));
-                                sudoku.blocks.get(sudoku.sudoku.get(index).second).getCases().add(index);
+                                sudoku.blocks.get(sudoku.sudoku.get(index).second).getCases().add(new Pair<>(possibleValues.get(0), index));
                                 progressMade = true;
                             } else if (possibleValues.isEmpty()) {
                                 return;
@@ -160,9 +160,9 @@ public class Multidoku implements Doku {
         }
         int index = i * sudoku.dimensions.second + j;
         // Check if value in block is already taken
-        for (int indexSudoku : sudoku.blocks.get(sudoku.sudoku.get(index).second).getCases()) {
-            if (indexSudoku != index) {
-                possibleValues.remove((Integer) sudoku.sudoku.get(indexSudoku).first);
+        for (Pair<Integer,Integer> indexSudoku : sudoku.blocks.get(sudoku.sudoku.get(index).second).getCases()) {
+            if (indexSudoku.first != index) {
+                possibleValues.remove((Integer) sudoku.sudoku.get(indexSudoku.first).first);
             }
         }
         return possibleValues;
