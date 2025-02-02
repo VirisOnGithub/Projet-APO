@@ -1,18 +1,32 @@
-## Getting Started
+# Projet APO : Sudoku
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+- Clément RENIERS
+- Louison PARANT
+- Luka COUTANT
 
-## Folder Structure
 
-The workspace contains two folders by default, where:
+## Methodologie
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+#### GIT
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+https://github.com/VirisOnGithub/Projet-APO
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+#### Déroulement
 
-## Dependency Management
+La première étape a été la conception du projet.  
+Nous avons commencé par une ébauche de diagramme de cas d'utilisation, 
+qui a permis un premier jet de notre vision.  
+Ensuite, nous avons réalisé un premier diagramme de classe, pour commencer l'implémentation.
 
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+Nous avons ensuite commencé à coder, avec un premier jet pour les sudokus classiques, sans aucune notion de blocs.
+
+Nous sommes dans un troisième temps revenu à la conception, pour nous rendre compte que nous aurions besoin des blocs pour pouvoir créer les sudokus et les résoudre plus efficacement.
+
+Enfin nous avons implémenté les blocs, et avons pu implémenter les méthodes de résolution.
+
+### Choix de conception
+
+Nous avons choisi de créer des `Pair`, classe qui semble plus naturelle pour représenter les chiffres dans la grille (couple valeur/bloc).  
+Nous avons également utilisé des `ArrayLists`, qui sont beaucoup plus adaptées pour manipuler des données de taille variable.  
+L'utilisation des `streams` de Java nous a également contraint à utiliser des `AtomicInteger` pour pouvoir modifier la valeur des blocs.  
+Pour les Multidokus, nous avons choisi de les représenter par une `ArrayList` de `Sudoku` avec des `"bindBlocks"` qui permet de lier les valeurs de certains blocs des grilles.
