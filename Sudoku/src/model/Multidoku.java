@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Multidoku {
+public class Multidoku implements Doku {
     private ArrayList<Sudoku> sudokus;
     private ArrayList<ArrayList<Integer>> bindBlocks;
 

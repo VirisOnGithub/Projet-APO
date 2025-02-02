@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-public class Sudoku {
+public class Sudoku implements Doku {
     public ArrayList<Pair<Integer, Integer>> sudoku;
     public final ArrayList<Block> blocks;
     final Pair<Integer, Integer> dimensions;
